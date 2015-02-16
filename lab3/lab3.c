@@ -41,7 +41,7 @@ return i;
 
 
 int main (int argc, char *argv[]) {
-fp = fopen("students", "rw");
+fp = fopen("students", "a+");
 //Read the keyed file
 if (fp == NULL) {
 	fprintf(stderr, "Can't open the input file \"students\". Exiting.\n");
@@ -75,12 +75,17 @@ char bool;
 			currentSize--;
 		}
 	}
-	printf("Quit? (Y/N)\t");	
-	scanf("%c", bool);
+	printf("Quit? (Y/N)\t");
+	getchar(); //Gets rid of newline	
+	bool = getchar();
 	if (bool == 'y' || bool == 'Y') break;
 }
 
-	
+for (int i = 0; i < currentSize; i++) {
+fprintf(fp, "%s %s %s", myStudent[i].name, myStudent[i].phone, myStudent[i].address);
+//printf("hey there");
+//fprintf(fp, "%s", "hey there");
+}	
 
 return 0;
 }
