@@ -11,13 +11,13 @@ typedef struct student {
 char name[32];
 char phone[16];
 char address[128];
+int id;
 } student_t;
 
-static int id = 0;
 FILE* fp;
 int studentSize = INITIAL_CAPACITY, currentSize = 0;
 
-int createStudent(student_t **myStudent, int currentSize, char name[32], char phone[16], char address[128]) {
+int createStudent(student_t **myStudent, int id, char name[32], char phone[16], char address[128]) {
 if (currentSize >= studentSize) {
 	studentSize *= 2;
 	myStudent = realloc(*myStudent, sizeof(student_t)*studentSize);
@@ -26,6 +26,7 @@ student_t* newStudent = malloc(sizeof(student_t));
 snprintf((*newStudent).name, sizeof((*newStudent).name), "%s", name);
 snprintf((*newStudent).phone, sizeof((*newStudent).phone), "%s", phone);
 snprintf((*newStudent).address, sizeof((*newStudent).name), "%s", address);
+(*newStudent).id = id;
 *(myStudent+currentSize*sizeof(student_t)) = newStudent;
 free(newStudent);
 int i = 0;
@@ -35,8 +36,7 @@ int x = i*sizeof(student_t);
 if ((*(*myStudent+x)).name == name || (*(*myStudent+x)).phone == phone || (*(*myStudent+x)).address == address) break;
 }
 if (i >= currentSize) return 0;
-else
-return i;
+else return i;
 }
 
 
@@ -52,20 +52,21 @@ student_t *myStudent = malloc(INITIAL_CAPACITY*sizeof(student_t));
 char myName[32];
 char myPhone[16];
 char myAddress[128];
-while (fscanf(fp, "%s %s %s", myName, myPhone, myAddress) == 3) {
-	createStudent(&myStudent, currentSize, myName, myPhone, myAddress);
+int myID;
+while (fscanf(fp, "%s %s %s %d", myName, myPhone, myAddress, myID) == 3) {
+	createStudent(&myStudent, myID, myName, myPhone, myAddress);
 }
+currentSize = myID;
 
 //Finished loading
 
 while (1) {
 char bool;
-	printf("Please enter the following information for a student:\n");	
-	printf("Name:\t");
+	printf("\nName >>\t");
 	scanf("%s", myName);
-	printf("Phone:\t");
+	printf("Phone >>\t");
 	scanf("%s", myPhone);
-	printf("Address:\t");
+	printf("Address >>\t");
 	scanf("%s", myAddress);
 	int x = createStudent(&myStudent, currentSize++, myName, myPhone, myAddress);
 	if (x != 0) {
@@ -75,16 +76,16 @@ char bool;
 			currentSize--;
 		}
 	}
-	printf("Quit? (Y/N)\t");
+	printf("Record Created with id: %d", currentSize);
+	printf("Quit(y/n)?\t");
 	getchar(); //Gets rid of newline	
 	bool = getchar();
 	if (bool == 'y' || bool == 'Y') break;
 }
 
 for (int i = 0; i < currentSize; i++) {
-fprintf(fp, "%s %s %s", myStudent[i].name, myStudent[i].phone, myStudent[i].address);
-//printf("hey there");
-//fprintf(fp, "%s", "hey there");
+fprintf(fp, "%s %s %s %d", (*(myStudent+(i*sizeof(student_t)))).name, (*(myStudent+(i*sizeof(student_t)))).phone, (*(myStudent+(i*sizeof(student_t)))).address, (*(myStudent+(i*sizeof(student_t)))).id);
+
 }	
 
 return 0;
