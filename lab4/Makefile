@@ -1,7 +1,7 @@
 CFLAGS=-g -Wall -Wextra -Isrc -rdynamic -DNDEBUG
 CC=gcc -std=c99
 
-SOURCES=lab3.c
+SOURCES=lab4.c
 
 all: 
 	$(CC) $(CFLAGS) $(SOURCES)

@@ -39,7 +39,7 @@ int createStudent(student_t *myStudent, int id, char name[32], char phone[16], c
 
 
 int main (void) {
-	fp = fopen("students", "a+");
+	fp = fopen("students", "r");
 	//Read the keyed file
 	if (fp == NULL) {
 		fprintf(stderr, "Can't open the input file \"students\". Exiting.\n");
@@ -62,29 +62,22 @@ int main (void) {
 
 	char bool = 'N';
 	while (bool != 'y' && bool != 'Y') {
-		printf("\nName >>\t");
-		scanf(" %s", myName);
-		printf("Phone >>\t");
-		scanf(" %s", myPhone);
-		printf("Address >>\t");
-		scanf(" %s", myAddress);
-		int x = createStudent(myStudent, currentSize++, myName, myPhone, myAddress);
-		if (x > 0) {
-			printf("Student duplicate found. Is this a new entry? (Y/N)\t");
-			scanf(" %c", &bool);
-			if (bool != 'y' && bool != 'Y') {
-				currentSize--;
+		printf("\nID >>\t");
+		scanf(" %d", &myID);
+		int found = 0;
+		printf("Record: ");
+		for (int i = 0; i < currentSize; i++)
+		{
+		if ((myStudent[i]).id == myID) {
+			printf("%s, %s, %s\n", (myStudent[i]).name, (myStudent[i]).phone, (myStudent[i]).address);
+			found = i+1;
 			}
 		}
-		else if (x == -1) myStudent = (student_t *) realloc(myStudent, sizeof(student_t)*studentSize);
+		if (found == 0) printf("Does not exist!\n");
 		printf("Quit(y/n)?\t");
 		getchar(); //Gets rid of newline	
 		bool = getchar();	
 	}
-
-	for (int i = actualSize; i < currentSize; i++) {
-		fprintf(fp, "%s,%s,%s,%d\n", (myStudent[i]).name, (myStudent[i]).phone, (myStudent[i]).address, (myStudent[i]).id);
-	}	
 	free(myStudent);
 	return 0;
 }

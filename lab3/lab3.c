@@ -29,7 +29,7 @@ int createStudent(student_t *myStudent, int id, char name[32], char phone[16], c
 	snprintf((*tempStudent).address, sizeof((*tempStudent).name), "%s", address);
 	(*tempStudent).id = id;
 	int i = 0;
-	for (; i < currentSize-1; i++)
+	for (; i < currentSize; i++)
 	{
 		if (strcmp((myStudent[i]).name, name) == 0 && strcmp((myStudent[i]).phone,  phone) == 0 && strcmp((myStudent[i]).address, address) == 0)
 			return i+1;
