@@ -21,7 +21,7 @@ int studentSize = INITIAL_CAPACITY, currentSize = 0, actualSize = 0;
 int createStudent(student_t *myStudent, int id, char name[32], char phone[16], char address[128]) {
 	if (currentSize >= studentSize) {
 		studentSize *= 2;
-		myStudent = (student_t *) realloc(myStudent, sizeof(student_t)*studentSize);
+		return -1;	
 	}
 	student_t *tempStudent = (student_t *) (myStudent+(id*sizeof(student_t)));
 	snprintf((*tempStudent).name, sizeof((*tempStudent).name), "%s", name);
@@ -57,8 +57,10 @@ int main (void) {
 	char myPhone[16];
 	char myAddress[128];
 	int myID = 0;
-	while (fscanf(fp, " %32[^,] %16[^,] %128[^,] %d", myName, myPhone, myAddress, &myID) == 4) {
-		createStudent(myStudent, currentSize++, myName, myPhone, myAddress);
+	while (fscanf(fp, " %32[^,\n], %16[^,\n], %128[^,\n], %d", myName, myPhone, myAddress, &myID) == 4) {
+		int x = 0;
+		x = createStudent(myStudent, currentSize++, myName, myPhone, myAddress);
+		if (x == -1) myStudent = (student_t *) realloc(myStudent, sizeof(student_t)*studentSize);
 printf("Record Read with id: %d\n", myID);	
 	}
 	if ((actualSize = myID) != currentSize)	printf("Error: Read only %d records, but there seems to be a record of %d", currentSize, actualSize); 
@@ -74,13 +76,14 @@ printf("Record Read with id: %d\n", myID);
 		printf("Address >>\t");
 		scanf(" %s", myAddress);
 		int x = createStudent(myStudent, currentSize++, myName, myPhone, myAddress);
-		if (x != 0) {
+		if (x > 0) {
 			printf("Student duplicate found. Is this a new entry? (Y/N)\t");
 			scanf(" %c", &bool);
 			if (bool != 'y' && bool != 'Y') {
 				currentSize--;
 			}
 		}
+		else if (x == -1) myStudent = (student_t *) realloc(myStudent, sizeof(student_t)*studentSize);
 printf("Record Created with id: %d\n", currentSize);
 		printf("Quit(y/n)?\t");
 		getchar(); //Gets rid of newline	
