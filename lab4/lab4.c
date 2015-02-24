@@ -1,5 +1,5 @@
 /** Victor Wu
-  CS350 - Lab 3
+  CS350 - Lab 4
   Program designed to take up larger memory in space, but more efficient so that there will not be as many FILE I/O operations - making it faster, overall */
 
 #define INITIAL_CAPACITY 100
