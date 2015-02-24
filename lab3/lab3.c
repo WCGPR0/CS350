@@ -85,5 +85,7 @@ int main (void) {
 	for (int i = actualSize; i < currentSize; i++) {
 		fprintf(fp, "%s,%s,%s,%d\n", (myStudent[i]).name, (myStudent[i]).phone, (myStudent[i]).address, (myStudent[i]).id);
 	}	
+	free(myStudent);
+	return 0;
 }
 
