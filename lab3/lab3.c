@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct student {
 	char name[32];
@@ -22,21 +23,24 @@ int createStudent(student_t *myStudent, int id, char name[32], char phone[16], c
 		studentSize *= 2;
 		myStudent = (student_t *) realloc(myStudent, sizeof(student_t)*studentSize);
 	}
-	myStudent = (student_t *) (myStudent+(id*sizeof(student_t)));
-	snprintf((*myStudent).name, sizeof((*myStudent).name), "%s", name);
-	snprintf((*myStudent).phone, sizeof((*myStudent).phone), "%s", phone);
-	snprintf((*myStudent).address, sizeof((*myStudent).name), "%s", address);
+	student_t *tempStudent = (student_t *) (myStudent+(id*sizeof(student_t)));
+	snprintf((*tempStudent).name, sizeof((*tempStudent).name), "%s", name);
+	snprintf((*tempStudent).phone, sizeof((*tempStudent).phone), "%s", phone);
+	snprintf((*tempStudent).address, sizeof((*tempStudent).name), "%s", address);
 	(*myStudent).id = id;
 	//*(myStudent+currentSize*sizeof(student_t)) = newStudent;
 	//free(newStudent);
 	int i = 0;
-	for (; i < currentSize; i++)
+	for (; i < currentSize-1; i++)
 	{
 		int x = i*sizeof(student_t);
-		if ((*(myStudent+x)).name == name || (*(myStudent+x)).phone == phone || (*(myStudent+x)).address == address) break;
+//printf("DEBUG:name(%s)phone(%s)address(%s)", (*(myStudent+x)).name, (*(myStudent+x)).phone, (*(myStudent+x)).address);
+//printf("\nDEBUG:name(%s)phone(%s)address(%s)", name, phone, address);
+//printf("\nDEBUG:match(%d)", (*(myStudent+x)).name == name);
+		if (strcmp((*(myStudent+x)).name, name) == 0 && strcmp((*(myStudent+x)).phone,  phone) == 0 && strcmp((*(myStudent+x)).address, address) == 0)
+			return i+1;
 	}
-	if (i >= currentSize) return 0;
-	else return i;
+	return 0;
 }
 
 
@@ -52,15 +56,16 @@ int main (void) {
 	char myName[32];
 	char myPhone[16];
 	char myAddress[128];
-	int myID;
-	while (fscanf(fp, "%s %s %s %d", myName, myPhone, myAddress, &myID) == 3) {
-		createStudent(myStudent, myID, myName, myPhone, myAddress);
+	int myID = 0;
+	while (fscanf(fp, " %32[^,] %16[^,] %128[^,] %d", myName, myPhone, myAddress, &myID) == 4) {
+		createStudent(myStudent, currentSize++, myName, myPhone, myAddress);
+printf("Record Read with id: %d\n", myID);	
 	}
-	actualSize = currentSize = myID;
+	if ((actualSize = myID) != currentSize)	printf("Error: Read only %d records, but there seems to be a record of %d", currentSize, actualSize); 
 
 	//Finished loading
 
-	char bool = 'Y';
+	char bool = 'N';
 	while (bool != 'y' && bool != 'Y') {
 		printf("\nName >>\t");
 		scanf(" %s", myName);
@@ -76,7 +81,7 @@ int main (void) {
 				currentSize--;
 			}
 		}
-		printf("Record Created with id: %d", currentSize);
+printf("Record Created with id: %d\n", currentSize);
 		printf("Quit(y/n)?\t");
 		getchar(); //Gets rid of newline	
 		bool = getchar();	
@@ -85,7 +90,5 @@ int main (void) {
 	for (int i = 0; i < currentSize; i++) { //Replace 0 with actualSize
 		fprintf(fp, "%s,%s,%s,%d\n", (*(myStudent+(i*sizeof(student_t)))).name, (*(myStudent+(i*sizeof(student_t)))).phone, (*(myStudent+(i*sizeof(student_t)))).address, (*(myStudent+(i*sizeof(student_t)))).id);
 	}	
-
-	return 0;
 }
 
