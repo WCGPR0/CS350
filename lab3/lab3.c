@@ -23,21 +23,21 @@ int createStudent(student_t *myStudent, int id, char name[32], char phone[16], c
 		studentSize *= 2;
 		return -1;	
 	}
-	student_t *tempStudent = (student_t *) (myStudent+(id*sizeof(student_t)));
+	student_t *tempStudent = (student_t *) &(myStudent[id]);
 	snprintf((*tempStudent).name, sizeof((*tempStudent).name), "%s", name);
 	snprintf((*tempStudent).phone, sizeof((*tempStudent).phone), "%s", phone);
 	snprintf((*tempStudent).address, sizeof((*tempStudent).name), "%s", address);
-	(*myStudent).id = id;
+	(*tempStudent).id = id;
 	//*(myStudent+currentSize*sizeof(student_t)) = newStudent;
 	//free(newStudent);
 	int i = 0;
 	for (; i < currentSize-1; i++)
 	{
-		int x = i*sizeof(student_t);
+	//	int x = i*sizeof(student_t);
 //printf("DEBUG:name(%s)phone(%s)address(%s)", (*(myStudent+x)).name, (*(myStudent+x)).phone, (*(myStudent+x)).address);
 //printf("\nDEBUG:name(%s)phone(%s)address(%s)", name, phone, address);
 //printf("\nDEBUG:match(%d)", (*(myStudent+x)).name == name);
-		if (strcmp((*(myStudent+x)).name, name) == 0 && strcmp((*(myStudent+x)).phone,  phone) == 0 && strcmp((*(myStudent+x)).address, address) == 0)
+		if (strcmp((myStudent[i]).name, name) == 0 && strcmp((myStudent[i]).phone,  phone) == 0 && strcmp((myStudent[i]).address, address) == 0)
 			return i+1;
 	}
 	return 0;
@@ -63,7 +63,7 @@ int main (void) {
 		if (x == -1) myStudent = (student_t *) realloc(myStudent, sizeof(student_t)*studentSize);
 printf("Record Read with id: %d\n", myID);	
 	}
-	if ((actualSize = myID) != currentSize)	printf("Error: Read only %d records, but there seems to be a record of %d", currentSize, actualSize); 
+	if ((actualSize = myID + 1) != currentSize)	printf("Error: Read only %d records, but there seems to be a record of %d", currentSize, actualSize); 
 
 	//Finished loading
 
@@ -84,14 +84,14 @@ printf("Record Read with id: %d\n", myID);
 			}
 		}
 		else if (x == -1) myStudent = (student_t *) realloc(myStudent, sizeof(student_t)*studentSize);
-printf("Record Created with id: %d\n", currentSize);
+printf("Record Created with id: %d\n", myID);
 		printf("Quit(y/n)?\t");
 		getchar(); //Gets rid of newline	
 		bool = getchar();	
 	}
 
-	for (int i = 0; i < currentSize; i++) { //Replace 0 with actualSize
-		fprintf(fp, "%s,%s,%s,%d\n", (*(myStudent+(i*sizeof(student_t)))).name, (*(myStudent+(i*sizeof(student_t)))).phone, (*(myStudent+(i*sizeof(student_t)))).address, (*(myStudent+(i*sizeof(student_t)))).id);
+	for (int i = actualSize; i < currentSize; i++) {
+		fprintf(fp, "%s,%s,%s,%d\n", (myStudent[i]).name, (myStudent[i]).phone, (myStudent[i]).address, (myStudent[i]).id);
 	}	
 }
 
