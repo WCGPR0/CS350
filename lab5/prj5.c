@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 int main (void) {
 	int N;
 	char str[100];
-	scanf("%d", N);
-	gets(str);
+	scanf("%d", &N);
+	fgets(str, sizeof(str), stdin);
 	N--;
 
 	pid_t childPID = fork();
@@ -18,7 +20,7 @@ int main (void) {
 				N--;	
 				childPID = fork();
 			}
-			else if (N == 0) {
+			 else if (N == 0) {
 				close(fd[1]);
 				read(fd[0], str, sizeof(str));
 			}
@@ -35,4 +37,5 @@ int main (void) {
 		printf("There was a fork error");
 		exit(1);
 		}
+	return 0;
 }
