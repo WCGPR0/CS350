@@ -4,8 +4,9 @@
 #include <semaphore.h>
 #include <string.h>
 
-
 #define MAX_TWEET_COUNT 140
+
+
 sem_t writeSem, readSem, buffSem;
 int currentP = 0;
 FILE *fpIn, *fpOut;
