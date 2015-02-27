@@ -1,8 +1,9 @@
-#include "stdio.h"
+#include <stdio.h>
 #include "time_functions.h" //This is a header file from Professor Foreman's class
 #include <pthread.h>
 #include <semaphore.h>
 #include <string.h>
+
 
 #define MAX_TWEET_COUNT 140
 sem_t writeSem, readSem, buffSem;
@@ -32,6 +33,7 @@ void *taskTwo(){
 	strcpy(tempString, buffer[currentP]);
 	if (strcmp(tempString, "\003") == 0) return 0;
 	fprintf(fpOut, tempString);
+printf("String wrote:\t%s\n", tempString);
 	sem_post(&writeSem);
 	sem_post(&buffSem);
 	return 0;
@@ -46,12 +48,12 @@ int main(void) {
 	printf("Please provide the name of an output file \n");
 	char outputFileName[256]; //Filenames should be limited to 255 characters
 	scanf("%s", outputFileName);
-	
+
 	fpIn = fopen(inputFileName, "r");
 	fpOut = fopen(outputFileName, "w");
 	pthread_t threads[2];	
 	sem_init(&writeSem, 0, 1);
-	sem_init(&readSem, 0 , 1);
+	sem_init(&readSem, 0 , 0);
 	sem_init(&buffSem, 0, 10);
 
 	start_timing();
@@ -60,7 +62,8 @@ int main(void) {
 	if (r1 != 0 || r2 != 0) printf("There was an error creating the pthreads");
 
 	//Blocking until thread completes
-	for (int i = 0; i < 2; i++) {
+	int i = 0;
+	for (i = 0; i < 2; i++) {
 		int rc = pthread_join(threads[i], NULL);
 		if (rc !=0) printf("There was an error with thread %d", i+1);
 	}

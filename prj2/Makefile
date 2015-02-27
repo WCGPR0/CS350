@@ -1,10 +1,11 @@
-CFLAGS=-g -Wall -Wextra -Isrc -rdynamic -DNDEBUG -lpthread
-CC=gcc -std=c99
+DFLAGS=-g -Wall -Wextra -Isrc -rdynamic -DNDEBUG
+CFLAGS=-pthread
+CC=gcc
 
 SOURCES=prj2.c
 
 all: 
-	$(CC) $(CFLAGS) $(SOURCES)
+	$(CC) $(CFLAGS) $(DFLAGS) $(SOURCES)
 
 
 clean:
