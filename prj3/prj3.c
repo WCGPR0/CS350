@@ -12,30 +12,40 @@ void error(int errorID) {
 
 int main() {
 	//Input
-	int *A = malloc(1), *B = malloc(1);
+	long *A = (long *) malloc(sizeof(long)), *B = (long *) malloc(sizeof(long));
 
 	//Matrix A
-	int loop = 1, currentSizeA = 0;
+	int currentSizeA = 1;
 	char tempString[256];
-	while (scanf("%s[^\n]", tempString)) {
-		char tempChar;
-		while (sscanf(tempString, " %c", &tempChar)) {
-			A = (int *) realloc(A, ++currentSizeA);	
+	while (scanf("%[^\n]", tempString)) {	
+		char *pEnd = &tempString[0];
+		long tempC = strtol(pEnd, &pEnd, 10);
+		do {
+		if (*pEnd == '*') {
+		//Asserts for 8 or less stars
 			int counter = 0;
-			while (tempChar == '*') {
-				if (++counter > 8) error(1);
-				break;break;
-			}
-			A[currentSizeA] = tempChar;
+			while (*(pEnd+(counter*sizeof(char))) == '*') ++counter;
+			if (counter > 8) error(1);
+			break; break;
 		}
+		else {
+printf("%ld\n", tempC);
+			A = (long *) realloc(A, ++currentSizeA*sizeof(long));
+			A[currentSizeA-1] = tempC;
+		}
+		}
+		while ((tempC = strtol(pEnd, &pEnd, 10)) != 0);	
+
 	}
 
 	
 	//Output
 	for (int i = 0; i < currentSizeA; i++) {
-		printf("%i", A[i]);
+		printf("%ld", A[i]);
 	}
 
+	free(A);
+	free(B);
 	return 0;
 }
 

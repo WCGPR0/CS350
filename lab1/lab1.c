@@ -34,7 +34,7 @@ fclose(fpOut);
 
 
 stop_timing();
-//printf("%10.3f", get_wall_clock_diff());
+printf("%10.3f", get_wall_clock_diff());
 printf("CPU Time: %10.3f\n", get_CPU_time_diff());
 
 return 0;
