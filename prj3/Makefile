@@ -1,5 +1,5 @@
 CFLAGS=-g -Wall -Wextra -Isrc -rdynamic -DNDEBUG
-CC=gcc -std=c99
+CC=gcc -std=c99 -pthread
 
 SOURCES=prj3.c
 
