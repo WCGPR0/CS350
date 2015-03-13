@@ -12,10 +12,12 @@ void error(int errorID) {
 
 int main() {
 	//Input
-	long *A = (long *) malloc(sizeof(long)), *B = (long *) malloc(sizeof(long));
+	long **A, **B;
+	int currentSizeAA = 0;
+	A = (long **) malloc(sizeof(long *));
 
 	//Matrix A
-	int currentSizeA = 0;
+	int *currentSizeA = malloc(sizeof(int));	
 	char tempString[256];
 	while (1) {
 		scanf(" %[^\n]", tempString);	
@@ -30,13 +32,14 @@ int main() {
 			goto MatrixB;
 		}
 		else {
-printf("%ld\n", tempC);
-			A = (long *) realloc(A, ++currentSizeA*sizeof(long));
-			A[currentSizeA-1] = tempC;
+printf("%ld\n", tempC);	
+			A[currentSizeAA] = (long *) realloc(A[currentSizeAA], ++currentSizeA[currentSizeAA]*sizeof(long));
+			A[currentSizeAA][currentSizeA[currentSizeAA]-1] = tempC;
 		}
 		}
 		while ((tempC = strtol(pEnd, &pEnd, 10)) != 0);	
-
+		A = (long **) realloc(A,++currentSizeAA*sizeof(long *));
+		currentSizeA = realloc(currentSizeA, currentSizeAA*sizeof(int));
 	}
 MatrixB:
 printf("END OF MATRIX A");
@@ -57,13 +60,14 @@ printf("%ld\n", tempC);
 	}
 printf("END OF MATRIX B");
 	
+
 	//Output
-	for (int i = 0; i < currentSizeA; i++) {
-		printf("%ld\t", A[i]);
-	}
+	for (int i = 0; i <= currentSizeAA-1; i++) 
+		for (int k = 0; k < currentSizeA[i]; k++) 
+			printf("%ld\t", A[i][k]);
 
 	free(A);
-	free(B);
+//	free(B);
 	return 0;
 }
 
