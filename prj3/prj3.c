@@ -44,8 +44,7 @@ printf("END OF MATRIX A");
 	//Matrix B
 	int currentSizeB = 0;
 	memset(&tempString[0], 0, sizeof(tempString));
-	while (1) {
-		scanf(" %[^\n]", tempString);
+	while (scanf(" %[^\n]",tempString) == 1) {
 		if ('\n' == tempString[0]) break;	
 		char *pEnd = &tempString[0];
 		long tempC = strtol(pEnd, &pEnd, 10);
@@ -56,7 +55,7 @@ printf("%ld\n", tempC);
 	  	}
 		while ((tempC = strtol(pEnd, &pEnd, 10)) != 0);	
 	}
-
+printf("END OF MATRIX B");
 	
 	//Output
 	for (int i = 0; i < currentSizeA; i++) {
