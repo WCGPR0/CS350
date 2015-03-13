@@ -15,9 +15,10 @@ int main() {
 	long *A = (long *) malloc(sizeof(long)), *B = (long *) malloc(sizeof(long));
 
 	//Matrix A
-	int currentSizeA = 1;
+	int currentSizeA = 0;
 	char tempString[256];
-	while (scanf("%[^\n]", tempString)) {	
+	while (true) {
+		scanf("%[^\n]", tempString);	
 		char *pEnd = &tempString[0];
 		long tempC = strtol(pEnd, &pEnd, 10);
 		do {
@@ -38,10 +39,26 @@ printf("%ld\n", tempC);
 
 	}
 
+	//Matrix B
+	int currentSizeB = 0;
+	memset(&tempString[0], 0, sizeof(tempString));
+	while (true) {
+		scanf("%[^\n]", tempString);
+		if (tempString == "") break;	
+		char *pEnd = &tempString[0];
+		long tempC = strtol(pEnd, &pEnd, 10);
+		do {
+printf("%ld\n", tempC);
+			B = (long *) realloc(B, ++currentSizeB*sizeof(long));
+			B[currentSizeB-1] = tempC;
+	  	}
+		while ((tempC = strtol(pEnd, &pEnd, 10)) != 0);	
+	}
+
 	
 	//Output
 	for (int i = 0; i < currentSizeA; i++) {
-		printf("%ld", A[i]);
+		printf("%ld\t", A[i]);
 	}
 
 	free(A);
