@@ -17,8 +17,8 @@ int main() {
 	//Matrix A
 	int currentSizeA = 0;
 	char tempString[256];
-	while (true) {
-		scanf("%[^\n]", tempString);	
+	while (1) {
+		scanf(" %[^\n]", tempString);	
 		char *pEnd = &tempString[0];
 		long tempC = strtol(pEnd, &pEnd, 10);
 		do {
@@ -27,7 +27,7 @@ int main() {
 			int counter = 0;
 			while (*(pEnd+(counter*sizeof(char))) == '*') ++counter;
 			if (counter > 8) error(1);
-			break; break;
+			goto MatrixB;
 		}
 		else {
 printf("%ld\n", tempC);
@@ -38,13 +38,15 @@ printf("%ld\n", tempC);
 		while ((tempC = strtol(pEnd, &pEnd, 10)) != 0);	
 
 	}
+MatrixB:
+printf("END OF MATRIX A");
 
 	//Matrix B
 	int currentSizeB = 0;
 	memset(&tempString[0], 0, sizeof(tempString));
-	while (true) {
-		scanf("%[^\n]", tempString);
-		if (tempString == "") break;	
+	while (1) {
+		scanf(" %[^\n]", tempString);
+		if ('\n' == tempString[0]) break;	
 		char *pEnd = &tempString[0];
 		long tempC = strtol(pEnd, &pEnd, 10);
 		do {
