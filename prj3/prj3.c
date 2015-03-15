@@ -4,10 +4,9 @@
 #include <pthread.h>
 
 struct ThreadData {
-long ***A, ***B;
-long *currentSizeAA, *currentSizeBB;
-int **currentSizeA, **currentSizeB;
-int myRole;
+long ***A, ***B, ***C;
+int *currentSizeBB, *currentSizeB;
+int x, y;
 };
 
 
@@ -21,7 +20,12 @@ void error(int errorID) {
 
 void *matrixMultiply(void *param) {
 	struct ThreadData* data = (struct ThreadData*) param;
-
+	long sum = 0;
+	int x = (*data).x % *(*data).currentSizeBB, y = (*data).y % *(*data).currentSizeB;
+	for (int i = 0; i < *(*data).currentSizeBB; i++) {
+		sum += (*(*data).A)[x][i] + (*(*data).B)[y][i];
+	}
+	(*(*data).C)[(*data).x][(*data).y] = sum; 
 return NULL;
 }
 
@@ -84,16 +88,18 @@ MatrixB:
 	pthread_t threads[currentSizeBB]; //Rows of Matrix B (ASSUMPTION: Rows of B = length of columns for each Ai)
 	struct ThreadData data[currentSizeBB];
 	static long **C;
-	C =  malloc(sizeof(long *)*currentSizeAA);
+	C =  malloc(sizeof(long *)*currentSizeAA*currentSizeB[0]);
 	
-	for(int i = 0; i < currentSizeBB; i++) {
-		data[i].A=&A;
-		data[i].B=&B;
-		data[i].currentSizeAA = &currentSizeAA;
-		data[i].currentSizeBB = &currentSizeBB;
-		data[i].currentSizeA = &currentSizeA;
-		data[i].currentSizeB = &currentSizeB;
-		data[i].myRole = i;
+	for(int i = 0; i < currentSizeAA; i++) {
+		for (int j = 0; j < currentSizeB[0]; j++) {
+			data[i+j].A=&A;
+			data[i+j].B=&B;
+			data[i+j].C=&C;	
+			data[i+j].currentSizeBB = &currentSizeBB;
+			data[i+j].currentSizeB = &currentSizeB[0];
+			data[i+j].x = j;
+			data[i+j].y = i;
+		}
 	}
 
 	for (int i = 0; i < currentSizeBB; i++) {
@@ -105,11 +111,11 @@ MatrixB:
 		pthread_join(threads[i], NULL);
 
 	//Output
-	for (int i = 0; i <= currentSizeAA-1; i++) { 
+/*	for (int i = 0; i <= currentSizeAA-1; i++) {  
 		for (int k = 0; k < currentSizeA[i]; k++) 
-			printf("%ld\t", A[i][k]);
+			printf("%ld\t", C[i][k]);
 			printf("\n");
-		}
+		} */
 
 	free(A);
 	free(B);
