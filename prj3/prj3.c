@@ -23,7 +23,7 @@ void *matrixMultiply(void *param) {
 	long sum = 0;
 	int x = (*data).x % *(*data).currentSizeBB, y = (*data).y % *(*data).currentSizeB;
 	for (int i = 0; i < *(*data).currentSizeBB; i++) {
-		sum += (*(*data).A)[x][i] + (*(*data).B)[y][i];
+		sum += (*(*data).A)[x][i] * (*(*data).B)[y][i];
 	}
 	(*(*data).C)[(*data).x][(*data).y] = sum; 
 return NULL;
@@ -73,7 +73,7 @@ MatrixB:
 		long tempC = strtol(pEnd, &pEnd, 10);
 		do {
 			B[currentSizeBB] = (long *) realloc(B[currentSizeBB], ++currentSizeB[currentSizeBB]*sizeof(long));
-			B[currentSizeBB][currentSizeB[currentSizeBB]] = tempC;
+			B[currentSizeBB][currentSizeB[currentSizeBB]-1] = tempC;
 	  	}
 		while ((tempC = strtol(pEnd, &pEnd, 10)) != 0);	
 		B = (long **) realloc(B,++currentSizeBB*sizeof(long *));
@@ -83,32 +83,35 @@ MatrixB:
 	//Consider checking for valid matrix multiplication (or leave it as a constraint)
 
 	//Calling threads for matrix multiplcation
-	int maxB = currentSizeB[0];
+/*	int maxB = currentSizeB[0];
 	for (int i = 1; i < currentSizeBB-1; i++) maxB = maxB + ((currentSizeB[i] - maxB) & ((currentSizeB[i] - maxB) >> (sizeof(int) * 8 - 1)));
-	pthread_t threads[currentSizeBB]; //Rows of Matrix B (ASSUMPTION: Rows of B = length of columns for each Ai)
-	struct ThreadData data[currentSizeBB];
+	int y = currentSizeB[0];
+	pthread_t threads[currentSizeAA * y]; //Rows of Matrix B (ASSUMPTION: Rows of B = length of columns for each Ai)	
+	struct ThreadData data[currentSizeAA * y];
 	static long **C;
-	C =  malloc(sizeof(long *)*currentSizeAA*currentSizeB[0]);
+	C =  malloc(sizeof(long *)*currentSizeAA * y);
 	
 	for(int i = 0; i < currentSizeAA; i++) {
-		for (int j = 0; j < currentSizeB[0]; j++) {
-			data[i+j].A=&A;
-			data[i+j].B=&B;
-			data[i+j].C=&C;	
-			data[i+j].currentSizeBB = &currentSizeBB;
-			data[i+j].currentSizeB = &currentSizeB[0];
-			data[i+j].x = j;
-			data[i+j].y = i;
+		for (int j = 0; j < y; j++) {
+			data[i*y+j].A=&A;
+			data[i*y+j].B=&B;
+			data[i*y+j].C=&C;	
+			data[i*y+j].currentSizeBB = &currentSizeBB;
+			data[i*y+j].currentSizeB = &currentSizeB[0];
+			data[i*y+j].x = y;
+			data[i*y+j].y = i;
 		}
 	}
 
-	for (int i = 0; i < currentSizeBB; i++) {
+	for (int i = 0; i < currentSizeAA + y + 1; i++) {
 		int rc = pthread_create(&threads[i], NULL, matrixMultiply, &data[i]);
 		if (rc) error(rc);
 	}	 
 
-	for (int i = 0; i < currentSizeBB; i++)
+	for (int i = 0; i < currentSizeAA + y + 1; i++)
 		pthread_join(threads[i], NULL);
+
+*/
 
 	//Output
 /*	for (int i = 0; i <= currentSizeAA-1; i++) {  
