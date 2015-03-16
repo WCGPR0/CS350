@@ -24,7 +24,7 @@ void *matrixMultiply(void *param) {
 	long sum = 0;
 	int x = (*data).x % *(*data).currentSizeBB, y = (*data).y % *(*data).currentSizeB;
 	for (int i = 0; i < *(*data).currentSizeBB; i++) {
-		sum += (*(*data).A)[x][i] * (*(*data).B)[y][i];
+		sum += (*(*data).A)[y][i] * (*(*data).B)[i][x];
 	}
 	C[(*data).x][(*data).y] = sum; 
 return NULL;
@@ -81,34 +81,34 @@ MatrixB:
 		currentSizeB = realloc(currentSizeB, currentSizeBB*sizeof(int));
 	}
 	
+
 	//Consider checking for valid matrix multiplication (or leave it as a constraint)
 
 	//Calling threads for matrix multiplcation
 	int maxB = currentSizeB[0];
-	for (int i = 1; i < currentSizeBB-1; i++) maxB = maxB + ((currentSizeB[i] - maxB) & ((currentSizeB[i] - maxB) >> (sizeof(int) * 8 - 1)));
-	int y = currentSizeB[0];
-	pthread_t threads[currentSizeAA * y]; //Rows of Matrix B (ASSUMPTION: Rows of B = length of columns for each Ai)	
-	struct ThreadData data[currentSizeAA * y];
-	C =  malloc(sizeof(long *)*currentSizeAA * y);
+	for (int i = 1; i < currentSizeBB-1; i++) maxB = maxB + ((currentSizeB[i] - maxB) & ((currentSizeB[i] - maxB) >> (sizeof(int) * 8 - 1)));	
+	pthread_t threads[currentSizeAA * maxB]; //Rows of Matrix B (ASSUMPTION: Rows of B = length of columns for each Ai)	
+	struct ThreadData data[currentSizeAA * maxB];
+	C =  malloc(sizeof(long *)*currentSizeAA * maxB);
 	
 	for(int i = 0; i < currentSizeAA; i++) {
-		for (int j = 0; j < y; j++) {
-			data[i*y+j].A=&A;
-			data[i*y+j].B=&B;	
-			data[i*y+j].currentSizeBB = &currentSizeBB;
-			data[i*y+j].currentSizeB = &currentSizeB[0];
-			data[i*y+j].x = j;
-			data[i*y+j].y = i;
+		for (int j = 0; j < maxB; j++) {
+			data[i*maxB+j].A=&A;
+			data[i*maxB+j].B=&B;	
+			data[i*maxB+j].currentSizeBB = &currentSizeBB;
+			data[i*maxB+j].currentSizeB = &currentSizeB[0];
+			data[i*maxB+j].x = j;
+			data[i*maxB+j].y = i;
 		}
-		C[i] = malloc(sizeof(long) * y);
+		C[i] = malloc(sizeof(long) * maxB);
 	}
 
-	for (int i = 0; i < currentSizeAA + y + 1; i++) {
+	for (int i = 0; i < currentSizeAA + maxB + 1; i++) {
 		int rc = pthread_create(&threads[i], NULL, matrixMultiply, &data[i]);
 		if (rc) error(rc);
 	}	 
 
-	for (int i = 0; i < currentSizeAA + y + 1; i++)
+	for (int i = 0; i < currentSizeAA + maxB + 1; i++)
 		pthread_join(threads[i], NULL);
 
 
