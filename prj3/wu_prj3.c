@@ -119,6 +119,9 @@ MatrixB:
 			printf("%ld\t", C[i][k]);
 			printf("\n");
 		} 
+	//CleanUp
+	free(currentSizeA);
+	free(currentSizeB);
 
 	for (int i = 0; i < currentSizeBB; i++)
 			free(B[i]);
