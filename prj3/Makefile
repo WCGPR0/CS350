@@ -1,7 +1,7 @@
 CFLAGS=-g -Wall -Wextra -Isrc -rdynamic -DNDEBUG
 CC=gcc -std=c99 -pthread
 
-SOURCES=prj3.c
+SOURCES=wu_prj3.c
 
 all: 
 	$(CC) $(CFLAGS) $(SOURCES)
