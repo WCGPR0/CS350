@@ -26,7 +26,7 @@ void *matrixMultiply(void *param) {
 	for (int i = 0; i < *(*data).currentSizeBB; i++) {
 		sum += (*(*data).A)[y][i] * (*(*data).B)[i][x];
 	}
-	C[(*data).x][(*data).y] = sum; 
+	C[(*data).y][(*data).x] = sum; 
 return NULL;
 }
 
@@ -103,12 +103,12 @@ MatrixB:
 		C[i] = malloc(sizeof(long) * maxB);
 	}
 
-	for (int i = 0; i < currentSizeAA + maxB + 1; i++) {
+	for (int i = 0; i < currentSizeAA * maxB; i++) {
 		int rc = pthread_create(&threads[i], NULL, matrixMultiply, &data[i]);
 		if (rc) error(rc);
 	}	 
 
-	for (int i = 0; i < currentSizeAA + maxB + 1; i++)
+	for (int i = 0; i < currentSizeAA * maxB; i++)
 		pthread_join(threads[i], NULL);
 
 
