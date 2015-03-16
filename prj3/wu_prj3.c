@@ -12,10 +12,12 @@ int x, y;
 static volatile long **C; //Final new Matrix
 
 void error(int errorID) {
-	if (errorID == 1)
-		printf("Error: Too many stars, please limit seperators to 8 max");
+	if (errorID == 0)
+		printf("Error: Invalid arguments. Please type --help for more details\n");
+	else if (errorID == 1)
+		printf("Error: Too many stars, please limit seperators to 8 max\n");
 	else
-		printf("Error: creating pthreads. Return code: %d", errorID);
+		printf("Error: creating pthreads. Return code: %d\n", errorID);
 	exit(0);
 }
 
@@ -30,7 +32,18 @@ void *matrixMultiply(void *param) {
 return NULL;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+int inputOption = (argc == 1) ? 0 : 1;
+FILE *fp;
+if (argc > 2) error(0);
+else if (argc == 2) {
+	if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) printf("Usage: wu_p3 [FILE1] [FILE2]...\nComputes two matrices using pthreads. File 1 is input, and File2 is output. \n\nExample:\twu_p3 input.txt output.txt\nBy default of no arguments, user input will be inputted in stdin.");
+	else {
+		char file[255] = "./";
+		strcat(file, argv[1]);
+		fp = fopen(file, "r");
+	}
+}
 	//Input
 	long **A, **B;
 	int currentSizeAA = 0;
@@ -40,7 +53,8 @@ int main() {
 	int *currentSizeA = malloc(sizeof(int));	
 	char tempString[256];
 	while (1) {
-		scanf(" %[^\n]", tempString);	
+		if (inputOption) { if (fscanf(fp, " %[^\n]", tempString) != 1) goto MatrixB; }
+		else if (scanf(" %[^\n]", tempString) != 1) goto MatrixB;	
 		char *pEnd = &tempString[0];
 		long tempC = strtol(pEnd, &pEnd, 10);
 		do {
@@ -68,7 +82,9 @@ MatrixB:
 	int *currentSizeB = malloc(sizeof(int));
 	B = (long **) malloc(sizeof(long *));
 	memset(&tempString[0], 0, sizeof(tempString));
-	while (scanf(" %[^\n]",tempString) == 1) {
+	while (1) {
+		if (inputOption) {if (fscanf(fp, " %[^\n]",tempString) != 1) goto MatrixC; }
+		else if (scanf(" %[^\n]", tempString) != 1) goto MatrixC;
 		if ('\n' == tempString[0]) break;	
 		char *pEnd = &tempString[0];
 		long tempC = strtol(pEnd, &pEnd, 10);
@@ -80,9 +96,9 @@ MatrixB:
 		B = (long **) realloc(B,++currentSizeBB*sizeof(long *));
 		currentSizeB = realloc(currentSizeB, currentSizeBB*sizeof(int));
 	}
-	
+MatrixC:
 
-	//Consider checking for valid matrix multiplication (or leave it as a constraint)
+	;//Consider checking for valid matrix multiplication (or leave it as a constraint)
 
 	//Calling threads for matrix multiplcation
 	int maxB = currentSizeB[0];
