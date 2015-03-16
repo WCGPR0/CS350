@@ -120,6 +120,11 @@ MatrixB:
 			printf("\n");
 		} 
 
+	for (int i = 0; i < currentSizeBB; i++)
+			free(B[i]);
+	for (int i = 0; i < currentSizeAA; i++)
+			free(A[i]);
+
 	free(A);
 	free(B);
 	free(C);
