@@ -125,8 +125,10 @@ MatrixB:
 
 	for (int i = 0; i < currentSizeBB; i++)
 			free(B[i]);
-	for (int i = 0; i < currentSizeAA; i++)
+	for (int i = 0; i < currentSizeAA; i++) {
 			free(A[i]);
+			free((long *)C[i]);
+	}
 
 	free(A);
 	free(B);
