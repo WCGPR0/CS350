@@ -34,14 +34,19 @@ return NULL;
 
 int main(int argc, char *argv[]) {
 int inputOption = (argc == 1) ? 0 : 1;
-FILE *fp;
-if (argc > 2) error(0);
-else if (argc == 2) {
+FILE *fpIn, *fpOut;
+if (argc > 3) error(0);
+else if (argc >= 2) {
 	if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) printf("Usage: wu_p3 [FILE1] [FILE2]...\nComputes two matrices using pthreads. File 1 is input, and File2 is output. \n\nExample:\twu_p3 input.txt output.txt\nBy default of no arguments, user input will be inputted in stdin.");
 	else {
 		char file[255] = "./";
 		strcat(file, argv[1]);
-		fp = fopen(file, "r");
+		fpIn = fopen(file, "r");
+		if (argc == 3) {
+		char file2[255] = "./";
+		strcat(file2, argv[2]);
+		fpOut = fopen(file2, "w");
+		}
 	}
 }
 	//Input
@@ -53,7 +58,7 @@ else if (argc == 2) {
 	int *currentSizeA = malloc(sizeof(int));	
 	char tempString[256];
 	while (1) {
-		if (inputOption) { if (fscanf(fp, " %[^\n]", tempString) != 1) goto MatrixB; }
+		if (inputOption) { if (fscanf(fpIn, " %[^\n]", tempString) != 1) goto MatrixB; }
 		else if (scanf(" %[^\n]", tempString) != 1) goto MatrixB;	
 		char *pEnd = &tempString[0];
 		long tempC = strtol(pEnd, &pEnd, 10);
@@ -83,7 +88,7 @@ MatrixB:
 	B = (long **) malloc(sizeof(long *));
 	memset(&tempString[0], 0, sizeof(tempString));
 	while (1) {
-		if (inputOption) {if (fscanf(fp, " %[^\n]",tempString) != 1) goto MatrixC; }
+		if (inputOption) {if (fscanf(fpIn, " %[^\n]",tempString) != 1) goto MatrixC; }
 		else if (scanf(" %[^\n]", tempString) != 1) goto MatrixC;
 		if ('\n' == tempString[0]) break;	
 		char *pEnd = &tempString[0];
@@ -131,9 +136,12 @@ MatrixC:
 
 	//Output
 	for (int i = 0; i <= currentSizeAA-1; i++) {  
-		for (int k = 0; k < currentSizeA[i]; k++) 
+		for (int k = 0; k < currentSizeA[i]; k++) { 
 			printf("%ld\t", C[i][k]);
+			if (inputOption) fprintf(fpOut, "%ld\t", C[i][k]);
+		}
 			printf("\n");
+			if (inputOption) fprintf(fpOut, "\n");
 		} 
 	//CleanUp
 	free(currentSizeA);
