@@ -1,0 +1,227 @@
+==11834== Memcheck, a memory error detector
+==11834== Copyright (C) 2002-2011, and GNU GPL'd, by Julian Seward et al.
+==11834== Using Valgrind-3.7.0 and LibVEX; rerun with -h for copyright info
+==11834== Command: ./a.out
+==11834== Parent PID: 10167
+==11834== 
+--11834-- 
+--11834-- Valgrind options:
+--11834--    --suppressions=/usr/lib/valgrind/debian-libc6-dbg.supp
+--11834--    --leak-check=full
+--11834--    --log-file=logfile.out
+--11834--    -v
+--11834-- Contents of /proc/version:
+--11834--   Linux version 3.16.0-0.bpo.4-amd64 (debian-kernel@lists.debian.org) (gcc version 4.6.3 (Debian 4.6.3-14) ) #1 SMP Debian 3.16.7-ckt4-3~bpo70+1 (2015-02-12)
+--11834-- Arch and hwcaps: AMD64, amd64-sse3-cx16
+--11834-- Page sizes: currently 4096, max supported 4096
+--11834-- Valgrind library directory: /usr/lib/valgrind
+--11834-- Reading syms from /import/linux/home/vwu4/CS350/prj3/a.out (0x400000)
+--11834-- Reading syms from /lib/x86_64-linux-gnu/ld-2.13.so (0x4000000)
+--11834--   Considering /lib/x86_64-linux-gnu/ld-2.13.so ..
+--11834--   .. CRC mismatch (computed 12479f05 wanted 3b27f9dd)
+--11834--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.13.so ..
+--11834--   .. CRC is valid
+--11834-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux (0x38000000)
+--11834--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
+--11834--   .. CRC mismatch (computed 917e6694 wanted d604052d)
+--11834--   Considering /usr/lib/debug/usr/lib/valgrind/memcheck-amd64-linux ..
+--11834--   .. CRC is valid
+--11834--    object doesn't have a dynamic symbol table
+--11834-- Reading suppressions file: /usr/lib/valgrind/debian-libc6-dbg.supp
+--11834-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==11834== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-11834-by-vwu4-on-remote00
+==11834== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-11834-by-vwu4-on-remote00
+==11834== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-11834-by-vwu4-on-remote00
+==11834== 
+==11834== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==11834== don't want to do, unless you know exactly what you're doing,
+==11834== or are doing some strange experiment):
+==11834==   /usr/lib/valgrind/../../bin/vgdb --pid=11834 ...command...
+==11834== 
+==11834== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==11834==   /path/to/gdb ./a.out
+==11834== and then give GDB the following command
+==11834==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=11834
+==11834== --pid is optional if only one valgrind process is running
+==11834== 
+--11834-- REDIR: 0x40169d0 (strlen) redirected to 0x38061d67 (vgPlain_amd64_linux_REDIR_FOR_strlen)
+--11834-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so (0x4a22000)
+--11834--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--11834--   .. CRC mismatch (computed 2439aefb wanted 12795d6b)
+--11834--   Considering /usr/lib/debug/usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--11834--   .. CRC is valid
+--11834-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so (0x4c24000)
+--11834--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--11834--   .. CRC mismatch (computed 765bf264 wanted b7bd9c2d)
+--11834--   Considering /usr/lib/debug/usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--11834--   .. CRC is valid
+--11834-- REDIR: 0x4016840 (index) redirected to 0x4c29180 (index)
+--11834-- REDIR: 0x40168c0 (strcmp) redirected to 0x4c2a0a0 (strcmp)
+--11834-- Reading syms from /lib/x86_64-linux-gnu/libpthread-2.13.so (0x4e2f000)
+--11834--   Considering /lib/x86_64-linux-gnu/libpthread-2.13.so ..
+--11834--   .. CRC mismatch (computed e5e40290 wanted 8df396bc)
+--11834--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libpthread-2.13.so ..
+--11834--   .. CRC is valid
+--11834-- Reading syms from /lib/x86_64-linux-gnu/libc-2.13.so (0x504b000)
+--11834--   Considering /lib/x86_64-linux-gnu/libc-2.13.so ..
+--11834--   .. CRC mismatch (computed a647c898 wanted 882b2ada)
+--11834--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.13.so ..
+--11834--   .. CRC is valid
+--11834-- REDIR: 0x50ce800 (strcasecmp) redirected to 0x4a22750 (_vgnU_ifunc_wrapper)
+--11834-- REDIR: 0x50d0ac0 (strncasecmp) redirected to 0x4a22750 (_vgnU_ifunc_wrapper)
+--11834-- REDIR: 0x50cc860 (__GI_strrchr) redirected to 0x4c28fa0 (__GI_strrchr)
+--11834-- REDIR: 0x50c5a00 (malloc) redirected to 0x4c28b80 (malloc)
+--11834-- REDIR: 0x50c6ae0 (realloc) redirected to 0x4c28c50 (realloc)
+==11834== Conditional jump or move depends on uninitialised value(s)
+==11834==    at 0x4C28C7B: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400DB1: main (prj3.c:54)
+==11834== 
+==11834== Use of uninitialised value of size 8
+==11834==    at 0x400DF5: main (prj3.c:55)
+==11834== 
+==11834== Invalid read of size 4
+==11834==    at 0x400D7D: main (prj3.c:54)
+==11834==  Address 0x53d6184 is 0 bytes after a block of size 4 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E6A: main (prj3.c:60)
+==11834== 
+==11834== Invalid write of size 4
+==11834==    at 0x400D82: main (prj3.c:54)
+==11834==  Address 0x53d6184 is 0 bytes after a block of size 4 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E6A: main (prj3.c:60)
+==11834== 
+==11834== Invalid read of size 4
+==11834==    at 0x400D84: main (prj3.c:54)
+==11834==  Address 0x53d6184 is 0 bytes after a block of size 4 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E6A: main (prj3.c:60)
+==11834== 
+==11834== Invalid read of size 8
+==11834==    at 0x400DA4: main (prj3.c:54)
+==11834==  Address 0x53d6138 is 0 bytes after a block of size 8 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E47: main (prj3.c:59)
+==11834== 
+==11834== Invalid write of size 8
+==11834==    at 0x400DB2: main (prj3.c:54)
+==11834==  Address 0x53d6138 is 0 bytes after a block of size 8 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E47: main (prj3.c:59)
+==11834== 
+==11834== Invalid read of size 8
+==11834==    at 0x400DC9: main (prj3.c:55)
+==11834==  Address 0x53d6138 is 0 bytes after a block of size 8 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E47: main (prj3.c:59)
+==11834== 
+==11834== Invalid read of size 4
+==11834==    at 0x400DE1: main (prj3.c:55)
+==11834==  Address 0x53d6184 is 0 bytes after a block of size 4 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E6A: main (prj3.c:60)
+==11834== 
+==11834== 
+==11834== Process terminating with default action of signal 2 (SIGINT)
+==11834==    at 0x511A970: __read_nocancel (syscall-template.S:82)
+==11834==    by 0x50BCED7: _IO_file_underflow@@GLIBC_2.2.5 (fileops.c:606)
+==11834==    by 0x50BE5BD: _IO_default_uflow (genops.c:440)
+==11834==    by 0x509FF1B: _IO_vfscanf (vfscanf.c:620)
+==11834==    by 0x50A27DC: __isoc99_scanf (isoc99_scanf.c:37)
+==11834==    by 0x400CD9: main (prj3.c:42)
+--11834-- REDIR: 0x50c5920 (free) redirected to 0x4c27ce0 (free)
+==11834== 
+==11834== HEAP SUMMARY:
+==11834==     in use at exit: 60 bytes in 5 blocks
+==11834==   total heap usage: 11 allocs, 6 frees, 108 bytes allocated
+==11834== 
+==11834== Searching for pointers to 5 not-freed blocks
+==11834== Checked 96,320 bytes
+==11834== 
+==11834== 16 bytes in 2 blocks are definitely lost in loss record 3 of 4
+==11834==    at 0x4C28BED: malloc (vg_replace_malloc.c:263)
+==11834==    by 0x4C28D6F: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400DB1: main (prj3.c:54)
+==11834== 
+==11834== LEAK SUMMARY:
+==11834==    definitely lost: 16 bytes in 2 blocks
+==11834==    indirectly lost: 0 bytes in 0 blocks
+==11834==      possibly lost: 0 bytes in 0 blocks
+==11834==    still reachable: 44 bytes in 3 blocks
+==11834==         suppressed: 0 bytes in 0 blocks
+==11834== Reachable blocks (those to which a pointer was found) are not shown.
+==11834== To see them, rerun with: --leak-check=full --show-reachable=yes
+==11834== 
+==11834== Use --track-origins=yes to see where uninitialised values come from
+==11834== ERROR SUMMARY: 17 errors from 10 contexts (suppressed: 4 from 4)
+==11834== 
+==11834== 1 errors in context 1 of 10:
+==11834== Use of uninitialised value of size 8
+==11834==    at 0x400DF5: main (prj3.c:55)
+==11834== 
+==11834== 
+==11834== 1 errors in context 2 of 10:
+==11834== Conditional jump or move depends on uninitialised value(s)
+==11834==    at 0x4C28C7B: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400DB1: main (prj3.c:54)
+==11834== 
+==11834== 
+==11834== 2 errors in context 3 of 10:
+==11834== Invalid read of size 4
+==11834==    at 0x400DE1: main (prj3.c:55)
+==11834==  Address 0x53d6184 is 0 bytes after a block of size 4 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E6A: main (prj3.c:60)
+==11834== 
+==11834== 
+==11834== 2 errors in context 4 of 10:
+==11834== Invalid read of size 8
+==11834==    at 0x400DC9: main (prj3.c:55)
+==11834==  Address 0x53d6138 is 0 bytes after a block of size 8 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E47: main (prj3.c:59)
+==11834== 
+==11834== 
+==11834== 2 errors in context 5 of 10:
+==11834== Invalid write of size 8
+==11834==    at 0x400DB2: main (prj3.c:54)
+==11834==  Address 0x53d6138 is 0 bytes after a block of size 8 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E47: main (prj3.c:59)
+==11834== 
+==11834== 
+==11834== 2 errors in context 6 of 10:
+==11834== Invalid read of size 8
+==11834==    at 0x400DA4: main (prj3.c:54)
+==11834==  Address 0x53d6138 is 0 bytes after a block of size 8 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E47: main (prj3.c:59)
+==11834== 
+==11834== 
+==11834== 2 errors in context 7 of 10:
+==11834== Invalid read of size 4
+==11834==    at 0x400D84: main (prj3.c:54)
+==11834==  Address 0x53d6184 is 0 bytes after a block of size 4 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E6A: main (prj3.c:60)
+==11834== 
+==11834== 
+==11834== 2 errors in context 8 of 10:
+==11834== Invalid write of size 4
+==11834==    at 0x400D82: main (prj3.c:54)
+==11834==  Address 0x53d6184 is 0 bytes after a block of size 4 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E6A: main (prj3.c:60)
+==11834== 
+==11834== 
+==11834== 2 errors in context 9 of 10:
+==11834== Invalid read of size 4
+==11834==    at 0x400D7D: main (prj3.c:54)
+==11834==  Address 0x53d6184 is 0 bytes after a block of size 4 alloc'd
+==11834==    at 0x4C28CCE: realloc (vg_replace_malloc.c:632)
+==11834==    by 0x400E6A: main (prj3.c:60)
+==11834== 
+--11834-- 
+--11834-- used_suppression:      4 dl-hack3-cond-1
+==11834== 
+==11834== ERROR SUMMARY: 17 errors from 10 contexts (suppressed: 4 from 4)
