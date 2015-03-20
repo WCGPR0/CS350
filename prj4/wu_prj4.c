@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <pthread.h>
+#include <sys/wait.h>
+#include <sys/shm.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 struct ThreadData {
 long ***A, ***B;
@@ -37,7 +40,7 @@ int inputOption = (argc == 1) ? 0 : 1;
 FILE *fpIn, *fpOut;
 if (argc > 3) error(0);
 else if (argc >= 2) {
-	if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) printf("Usage: wu_p3 [FILE1] [FILE2]...\nComputes two matrices using pthreads. File 1 is input, and File2 is output. \n\nExample:\twu_p3 input.txt output.txt\nBy default of no arguments, user input will be inputted in stdin.");
+	if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) { printf("Usage: wu_p3 [FILE1] [FILE2]...\nComputes two matrices using pthreads. File 1 is input, and File2 is output. \n\nExample:\twu_p3 input.txt output.txt\nBy default of no arguments, user input will be inputted in stdin.\n"); exit(0); }
 	else {
 		char file[255] = "./";
 		strcat(file, argv[1]);
@@ -103,37 +106,51 @@ MatrixB:
 	}
 MatrixC:
 
-	;//Consider checking for valid matrix multiplication (or leave it as a constraint)
-
-	//Calling threads for matrix multiplcation
+	;//Consider checking for valid matrix multiplication (or leave it as a constraint)	
 	int maxB = currentSizeB[0];
-	for (int i = 1; i < currentSizeBB-1; i++) maxB = maxB + ((currentSizeB[i] - maxB) & ((currentSizeB[i] - maxB) >> (sizeof(int) * 8 - 1)));	
-	pthread_t threads[currentSizeAA * maxB]; //Rows of Matrix B (ASSUMPTION: Rows of B = length of columns for each Ai)	
-	struct ThreadData data[currentSizeAA * maxB];
-	C =  malloc(sizeof(long *)*currentSizeAA * maxB);
+	for (int i = 1; i < currentSizeBB-1; i++) maxB = maxB + ((currentSizeB[i] - maxB) & ((currentSizeB[i] - maxB) >> (sizeof(int) * 8 - 1)));		
+	pid_t *childPids = malloc(currentSizeAA * maxB * sizeof(pid_t));;
 	
-	for(int i = 0; i < currentSizeAA; i++) {
-		for (int j = 0; j < maxB; j++) {
-			data[i*maxB+j].A=&A;
-			data[i*maxB+j].B=&B;	
-			data[i*maxB+j].currentSizeBB = &currentSizeBB;
-			data[i*maxB+j].currentSizeB = &currentSizeB[0];
-			data[i*maxB+j].x = j;
-			data[i*maxB+j].y = i;
-		}
-		C[i] = malloc(sizeof(long) * maxB);
-	}
 
+	int memid, pid;
+	if (memid = shmget(IPC_PRIVATE, sizeof(long *)*currentSizeAA*maxB, (SHM_W | SHM_R | IPC_CREAT)) == -1) exit(-1); //Unsuccessful in getting memory
+	
 	for (int i = 0; i < currentSizeAA * maxB; i++) {
-		pid_t pid = fork();	
-		if (pid == 0) break;
+		int role = 0;
+		pid_t pid = fork();
+		//Child Process
+		if (pid == 0) {
+		//Matrix multiplication
+			long sum = 0;
+			C = (long **) shmat(memid, 0, 0);
+			int x = role % maxB, y = (int) role / maxB;
+			for (int i = 0; i < currentSizeBB; i++)
+				sum += A[y][i] * B[i][x];
+			C[y][x] = sum;
+			shmdt((void *) C); 
+			exit(0);	
+		}
 		else if(pid < 0) error(pid);
-	}	 
-
+		//Parent Process
+		else {
+			C = (int *) shmat(memid, 0, 0);
+			childPids[i] = pid;
+			++role;
+		}
+	}
 	int status = 0;
-	for (int i = 0; i < pid; i++)
-		status = (waitpid(pid, &status, 0) == pid) ? 0 : -1;
-
+	do {
+		status^=status;
+		for (int i = 0; i < currentSizeAA * maxB; ++i) {
+			if (childPids[i] > 0) {
+				if (waitpid(childPids[i], NULL, WNOHANG)) //Parent process should not be waiting
+					childPids[i]^=childPids[i];
+				else
+					status = 1;	
+			}
+		}
+		sleep(0);
+	} while (status);
 	
 
 	//Output
@@ -144,7 +161,9 @@ MatrixC:
 		}
 			printf("\n");
 			if (inputOption) fprintf(fpOut, "\n");
-		} 
+		}
+
+ 
 	//CleanUp
 	free(currentSizeA);
 	free(currentSizeB);
@@ -156,9 +175,10 @@ MatrixC:
 			free((long *)C[i]);
 	}
 
+	free(childPids);
 	free(A);
 	free(B);
-	free(C);
+	shmdt((void *) C);	
 	return status;
 }
 
