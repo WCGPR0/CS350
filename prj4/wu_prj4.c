@@ -17,8 +17,10 @@ void error(int errorID) {
 		printf("Error: Invalid arguments. Please type --help for more details\n");
 	else if (errorID == 1)
 		printf("Error: Too many stars, please limit seperators to 8 max\n");
+	else if (errorID == -1)
+		printf("Error: creating accessing memory.\n");
 	else
-		printf("Error: creating pthreads. Return code: %d\n", errorID);
+		printf("Error: Return code: %d\n", errorID);
 	exit(0);
 }
 
@@ -28,7 +30,7 @@ int main(int argc, char *argv[]) {
 	FILE *fpIn, *fpOut;
 	if (argc > 3) error(0);
 	else if (argc >= 2) {
-		if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) { printf("Usage: wu_p3 [FILE1] [FILE2]...\nComputes two matrices using pthreads. File 1 is input, and File2 is output. \n\nExample:\twu_p3 input.txt output.txt\nBy default of no arguments, user input will be inputted in stdin.\n"); exit(0); }
+		if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) { printf("Usage: wu_p4 [FILE1] [FILE2]...\nComputes two matrices using pthreads. File 1 is input, and File2 is output. \n\nExample:\twu_p3 input.txt output.txt\nBy default of no arguments, user input will be inputted in stdin.\n"); exit(0); }
 		else {
 			char file[255] = "./";
 			strcat(file, argv[1]);
@@ -100,11 +102,12 @@ MatrixC:
 	pid_t *childPids = malloc(currentSizeAA * maxB * sizeof(pid_t));;
 
 
-	static volatile long ***C; //Final new Matrix
+	long **C; //Final new Matrix
 	//Shared Memory
-	int memid, pid;
-	if (memid = shmget(IPC_PRIVATE, sizeof(long *)*currentSizeAA*maxB, (SHM_W | SHM_R | IPC_CREAT)) == -1) exit(-1); //Unsuccessful in getting memory
-
+	int memid, pid = 1;
+	if ((memid = shmget(IPC_PRIVATE, sizeof(long)*currentSizeAA*maxB, (SHM_W | SHM_R | IPC_CREAT))) == -1) exit(-1); //Unsuccessful in getting memory
+	
+	
 	//Continious Forking and Loop
 	for (int i = 0; i < currentSizeAA * maxB; i++) {
 		int role = 0;
@@ -113,18 +116,18 @@ MatrixC:
 		if (pid == 0) {
 			//Matrix multiplication
 			long sum = 0;
-			C = (long ***) shmat(memid, 0, 0);
+			C = (long **) shmat(memid, NULL, 0);
+			if (C == (long **) -1) error(-1);
 			int x = role % maxB, y = (int) role / maxB;
 			for (int i = 0; i < currentSizeBB; i++)
 				sum += A[y][i] * B[i][x];
-			(*C)[y][x] = sum;
+			*((*C)+(y+1)*x) = sum;
 			shmdt((void *) C); 
 			exit(0);	
 		}
 		else if(pid < 0) error(pid);
 		//Parent Process
 		else {
-			C = (long ***) shmat(memid, 0, 0);
 			childPids[i] = pid;
 			++role;
 		}
@@ -143,12 +146,15 @@ MatrixC:
 		sleep(0);
 	} while (status);
 
-
+	if (pid != 0) {
+		C = (long **) shmat(memid, NULL, 0);
+		if (C == (long **) -1) error(-1);
+	}
 	//Output
 	for (int i = 0; i <= currentSizeAA-1; i++) {  
 		for (int k = 0; k < currentSizeA[i]; k++) { 
-			printf("%ld\t", (*C)[i][k]);
-			if (inputOption) fprintf(fpOut, "%ld\t", C[i][k]);
+			printf("%ld\t", *((*C)+(i+1)*k));
+			if (inputOption) fprintf(fpOut, "%ld\t", *((*C)+(i+1)*k));
 		}
 		printf("\n");
 		if (inputOption) fprintf(fpOut, "\n");
@@ -163,13 +169,17 @@ MatrixC:
 		free(B[i]);
 	for (int i = 0; i < currentSizeAA; i++) {
 		free(A[i]);
-		free((long *)C[i]);
+//		free((long *)C[i]);
 	}
 
 	free(childPids);
 	free(A);
 	free(B);
-	shmdt((void *) C);	
+	shmdt((void *) C);
+
+	if (pid != 0)
+		if (shmctl(memid, IPC_RMID,0) < 0)
+			exit(-1);	
 	return status;
 }
 
