@@ -12,8 +12,6 @@ struct ThreadData {
 	int x, y;
 };
 
-static volatile long **C; //Final new Matrix
-
 void error(int errorID) {
 	if (errorID == 0)
 		printf("Error: Invalid arguments. Please type --help for more details\n");
@@ -24,16 +22,6 @@ void error(int errorID) {
 	exit(0);
 }
 
-void *matrixMultiply(void *param) {
-	struct ThreadData* data = (struct ThreadData*) param;
-	long sum = 0;
-	int x = (*data).x % *(*data).currentSizeBB, y = (*data).y % *(*data).currentSizeB;
-	for (int i = 0; i < *(*data).currentSizeBB; i++) {
-		sum += (*(*data).A)[y][i] * (*(*data).B)[i][x];
-	}
-	C[(*data).y][(*data).x] = sum; 
-	return NULL;
-}
 
 int main(int argc, char *argv[]) {
 	int inputOption = (argc == 1) ? 0 : 1;
@@ -112,6 +100,7 @@ MatrixC:
 	pid_t *childPids = malloc(currentSizeAA * maxB * sizeof(pid_t));;
 
 
+	static volatile long ***C; //Final new Matrix
 	//Shared Memory
 	int memid, pid;
 	if (memid = shmget(IPC_PRIVATE, sizeof(long *)*currentSizeAA*maxB, (SHM_W | SHM_R | IPC_CREAT)) == -1) exit(-1); //Unsuccessful in getting memory
@@ -124,18 +113,18 @@ MatrixC:
 		if (pid == 0) {
 			//Matrix multiplication
 			long sum = 0;
-			C = (long **) shmat(memid, 0, 0);
+			C = (long ***) shmat(memid, 0, 0);
 			int x = role % maxB, y = (int) role / maxB;
 			for (int i = 0; i < currentSizeBB; i++)
 				sum += A[y][i] * B[i][x];
-			C[y][x] = sum;
+			(*C)[y][x] = sum;
 			shmdt((void *) C); 
 			exit(0);	
 		}
 		else if(pid < 0) error(pid);
 		//Parent Process
 		else {
-			C = (int *) shmat(memid, 0, 0);
+			C = (long ***) shmat(memid, 0, 0);
 			childPids[i] = pid;
 			++role;
 		}
@@ -158,7 +147,7 @@ MatrixC:
 	//Output
 	for (int i = 0; i <= currentSizeAA-1; i++) {  
 		for (int k = 0; k < currentSizeA[i]; k++) { 
-			printf("%ld\t", C[i][k]);
+			printf("%ld\t", (*C)[i][k]);
 			if (inputOption) fprintf(fpOut, "%ld\t", C[i][k]);
 		}
 		printf("\n");
