@@ -1,5 +1,5 @@
 CFLAGS=-g -Wall -Wextra -Isrc -rdynamic -DNDEBUG 
-CC=gcc -std=c99 -pthread -D _BSD_SOURCE
+CC=gcc -std=c99 -pthread -D _BSD_SOURCE -Wall -g
 SOURCES=wu_prj5.c
 OBJECTS=$(SOURCES:.c=.o)
 all: 
