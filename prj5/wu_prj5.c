@@ -21,6 +21,7 @@ struct data {
 } myData;
 
 void readFunctionOne(void* arg) {
+	for (int count = 10; count >= 0; --count) {
 	struct data* my_data = (struct data *) arg;
 	sem_wait(&mutex);
 	++readers;
@@ -33,10 +34,12 @@ void readFunctionOne(void* arg) {
 	sem_post(&mutex);
 	printf(">>> DB value read =: %d:%hu by reader number: %d\n", (int) (*my_data).secs, (*my_data).mils, readers);
 	millisleep((*my_data).sleepR);
+	}
 }
 
 void writeFunctionOne(void* arg) {
 	struct data* my_data = (struct data *) arg;
+	for (int count = 10; count >= 0; --count) {
 	sem_wait(&writeOrRead);
 
 	get_wall_clock(&(*my_data).secs, &(*my_data).mils);
@@ -44,10 +47,12 @@ void writeFunctionOne(void* arg) {
 
 	sem_post(&writeOrRead);
 	millisleep((*my_data).sleepW);
+	}
 }
 
 void readFunctionTwo(void* arg) {
 	struct data* my_data = (struct data *) arg;
+	for (int count = 10; count >= 0; --count) {
 	sem_wait(&mutex);
 	sem_wait(&r);
 	sem_wait(&writeOrRead);
@@ -66,10 +71,12 @@ void readFunctionTwo(void* arg) {
 	sem_post(&writeOrRead);
 	
 	millisleep((*my_data).sleepR);
+	}
 }
 
 void writeFunctionTwo(void* arg) {
 	struct data* my_data = (struct data *) arg;
+	for (int count = 10; count >= 0; --count) {
 	sem_wait(&order);
 	++writers;
 	if (writers == 1) sem_wait(&r);
@@ -85,10 +92,12 @@ void writeFunctionTwo(void* arg) {
 	if (writers == 0) sem_post(&r);
 	sem_post(&order);
 	millisleep((*my_data).sleepW);
+	}
 }
 
 void readFunctionThree(void* arg) {
 	struct data* my_data = (struct data *) arg;	
+	for (int count = 10; count >= 0; --count) {
 	sem_wait(&order);
 	sem_wait(&writeOrRead);
 	if (readers == 0)
@@ -106,10 +115,12 @@ void readFunctionThree(void* arg) {
 	sem_post(&writeOrRead);
 
 	millisleep((*my_data).sleepR);
+	}
 }
 
 void writeFunctionThree(void* arg) {
 	struct data* my_data = (struct data *) arg;
+	for (int count = 10; count >= 0; --count) {
 	sem_wait(&order);
 	sem_wait(&mutex);
 	sem_post(&order);
@@ -119,6 +130,7 @@ void writeFunctionThree(void* arg) {
 
 	sem_post(&mutex);
 	millisleep((*my_data).sleepW);
+	}
 }
 
 
