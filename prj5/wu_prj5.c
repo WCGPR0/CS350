@@ -22,114 +22,114 @@ struct data {
 
 void readFunctionOne(void* arg) {
 	for (int count = 10; count >= 0; --count) {
-	struct data* my_data = (struct data *) arg;
-	sem_wait(&mutex);
-	++readers;
-	if (readers == 1)
-		sem_wait(&writeOrRead);
-	sem_post(&mutex);
-	--readers;
-	if (readers == 0)
-		sem_post(&writeOrRead);
-	sem_post(&mutex);
-	printf(">>> DB value read =: %d:%hu by reader number: %d\n", (int) (*my_data).secs, (*my_data).mils, readers);
-	millisleep((*my_data).sleepR);
+		struct data* my_data = (struct data *) arg;
+		sem_wait(&mutex);
+		++readers;
+		if (readers == 1)
+			sem_wait(&writeOrRead);
+		sem_post(&mutex);
+		--readers;
+		if (readers == 0)
+			sem_post(&writeOrRead);
+		sem_post(&mutex);
+		printf(">>> DB value read =: %d:%hu by reader number: %d\n", (int) (*my_data).secs, (*my_data).mils, readers);
+		millisleep((*my_data).sleepR);
 	}
 }
 
 void writeFunctionOne(void* arg) {
 	struct data* my_data = (struct data *) arg;
 	for (int count = 10; count >= 0; --count) {
-	sem_wait(&writeOrRead);
+		sem_wait(&writeOrRead);
 
-	get_wall_clock(&(*my_data).secs, &(*my_data).mils);
-	printf("*** DB value set to: %d:%hu by writer number: %d\n", (int) (*my_data).secs, (*my_data).mils, 0);		
+		get_wall_clock(&(*my_data).secs, &(*my_data).mils);
+		printf("*** DB value set to: %d:%hu by writer number: %d\n", (int) (*my_data).secs, (*my_data).mils, 0);		
 
-	sem_post(&writeOrRead);
-	millisleep((*my_data).sleepW);
+		sem_post(&writeOrRead);
+		millisleep((*my_data).sleepW);
 	}
 }
 
 void readFunctionTwo(void* arg) {
 	struct data* my_data = (struct data *) arg;
 	for (int count = 10; count >= 0; --count) {
-	sem_wait(&mutex);
-	sem_wait(&r);
-	sem_wait(&writeOrRead);
-	++readers;
-	if (readers == 1)
-		sem_wait(&w);
-	sem_post(&writeOrRead);
-	sem_post(&r);	
-	sem_post(&mutex);
-	
-	printf(">>> DB value read =: %d:%hu by reader number: %d\n", (int) (*my_data).secs, (*my_data).mils, readers);
+		sem_wait(&mutex);
+		sem_wait(&r);
+		sem_wait(&writeOrRead);
+		++readers;
+		if (readers == 1)
+			sem_wait(&w);
+		sem_post(&writeOrRead);
+		sem_post(&r);	
+		sem_post(&mutex);
 
-	sem_wait(&writeOrRead);
-	--readers;
-	if (readers == 0) sem_post(&w);
-	sem_post(&writeOrRead);
-	
-	millisleep((*my_data).sleepR);
+		printf(">>> DB value read =: %d:%hu by reader number: %d\n", (int) (*my_data).secs, (*my_data).mils, readers);
+
+		sem_wait(&writeOrRead);
+		--readers;
+		if (readers == 0) sem_post(&w);
+		sem_post(&writeOrRead);
+
+		millisleep((*my_data).sleepR);
 	}
 }
 
 void writeFunctionTwo(void* arg) {
 	struct data* my_data = (struct data *) arg;
 	for (int count = 10; count >= 0; --count) {
-	sem_wait(&order);
-	++writers;
-	if (writers == 1) sem_wait(&r);
-	sem_post(&order);
-	sem_wait(&w);
+		sem_wait(&order);
+		++writers;
+		if (writers == 1) sem_wait(&r);
+		sem_post(&order);
+		sem_wait(&w);
 
-	get_wall_clock(&(*my_data).secs, &(*my_data).mils);
-	printf("*** DB value set to: %d:%hu by writer number: %d\n", (int) (*my_data).secs, (*my_data).mils, 0);		
+		get_wall_clock(&(*my_data).secs, &(*my_data).mils);
+		printf("*** DB value set to: %d:%hu by writer number: %d\n", (int) (*my_data).secs, (*my_data).mils, 0);		
 
-	sem_post(&w);
-	sem_wait(&order);
-	--writers;
-	if (writers == 0) sem_post(&r);
-	sem_post(&order);
-	millisleep((*my_data).sleepW);
+		sem_post(&w);
+		sem_wait(&order);
+		--writers;
+		if (writers == 0) sem_post(&r);
+		sem_post(&order);
+		millisleep((*my_data).sleepW);
 	}
 }
 
 void readFunctionThree(void* arg) {
 	struct data* my_data = (struct data *) arg;	
 	for (int count = 10; count >= 0; --count) {
-	sem_wait(&order);
-	sem_wait(&writeOrRead);
-	if (readers == 0)
-		sem_wait(&mutex);
-	++readers;
-	sem_post(&order);
-	sem_post(&writeOrRead);
-	
-	printf(">>> DB value read =: %d:%hu by reader number: %d\n", (int) (*my_data).secs, (*my_data).mils, readers);
+		sem_wait(&order);
+		sem_wait(&writeOrRead);
+		if (readers == 0)
+			sem_wait(&mutex);
+		++readers;
+		sem_post(&order);
+		sem_post(&writeOrRead);
 
-	sem_wait(&writeOrRead);
-	--readers;
-	if (readers == 0)
-		sem_post(&mutex);
-	sem_post(&writeOrRead);
+		printf(">>> DB value read =: %d:%hu by reader number: %d\n", (int) (*my_data).secs, (*my_data).mils, readers);
 
-	millisleep((*my_data).sleepR);
+		sem_wait(&writeOrRead);
+		--readers;
+		if (readers == 0)
+			sem_post(&mutex);
+		sem_post(&writeOrRead);
+
+		millisleep((*my_data).sleepR);
 	}
 }
 
 void writeFunctionThree(void* arg) {
 	struct data* my_data = (struct data *) arg;
 	for (int count = 10; count >= 0; --count) {
-	sem_wait(&order);
-	sem_wait(&mutex);
-	sem_post(&order);
+		sem_wait(&order);
+		sem_wait(&mutex);
+		sem_post(&order);
 
-	get_wall_clock(&(*my_data).secs, &(*my_data).mils);
-	printf("*** DB value set to: %d:%hu by writer number: %d\n", (int) (*my_data).secs, (*my_data).mils, 0);		
+		get_wall_clock(&(*my_data).secs, &(*my_data).mils);
+		printf("*** DB value set to: %d:%hu by writer number: %d\n", (int) (*my_data).secs, (*my_data).mils, 0);		
 
-	sem_post(&mutex);
-	millisleep((*my_data).sleepW);
+		sem_post(&mutex);
+		millisleep((*my_data).sleepW);
 	}
 }
 
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
 		if ((argc >= 2) && (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h"))) { printf("Usage: wu_p4 [FILE] [Number of Writes] [Number of Reads] [Write Delay] [Read Delay] (option)...\nReads and writes to a shared file using a monitor. Use option 1 for reader priority, 2 for writer priority, and 3 for neither. Defaults to option 2 with no specified input. \n\nExample:\twu_p5 10 10 10 10 2\nSimulates a buffer shared file being accessed by 10 readers/writers with 10 delay for readers/writers\n"); return -1;
 		}
 		else
-		printf("Invalid arguments. Please use flags --help or -h for assistance\n");
+			printf("Invalid arguments. Please use flags --help or -h for assistance\n");
 		return -1;
 	}
 	else {
